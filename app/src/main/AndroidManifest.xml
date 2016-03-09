@@ -8,8 +8,10 @@
          location permissions for the 'MyLocation' functionality. 
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-feature android:name="android.hardware.camera"
-                android:required="true" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -45,6 +47,15 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.ahmadnaufalfarhan.guestguessitb.MainActivity" />
+        </activity>
+        <activity
+            android:name=".SubmitAnswerActivity"
+            android:label="@string/title_activity_submit_answer"
+            android:parentActivityName=".MapsActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.ahmadnaufalfarhan.guestguessitb.MapsActivity" />
         </activity>
     </application>
 

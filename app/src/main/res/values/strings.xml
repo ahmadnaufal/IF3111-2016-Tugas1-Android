@@ -3,5 +3,18 @@
     <string name="action_settings">Settings</string>
     <string name="request_location">Request Challenge!</string>
     <string name="take_picture">Take A Picture!</string>
+    <string name="recenter_map">Center to ITB</string>
     <string name="title_activity_maps">Map</string>
+    <string name="title_activity_submit_answer">Submit Answer</string>
+    <string name="label_submit">Your Answer</string>
+    <string-array name="location_array">
+        <item>Mercury</item>
+        <item>Venus</item>
+        <item>Earth</item>
+        <item>Mars</item>
+        <item>Jupiter</item>
+        <item>Saturn</item>
+        <item>Uranus</item>
+        <item>Neptune</item>
+    </string-array>
 </resources>
