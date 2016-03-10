@@ -8,13 +8,15 @@
     <string name="title_activity_submit_answer">Submit Answer</string>
     <string name="label_submit">Your Answer</string>
     <string-array name="location_array">
-        <item>Mercury</item>
-        <item>Venus</item>
-        <item>Earth</item>
-        <item>Mars</item>
-        <item>Jupiter</item>
-        <item>Saturn</item>
-        <item>Uranus</item>
-        <item>Neptune</item>
+        <item>GKU Barat</item>
+        <item>GKU Timur</item>
+        <item>Intel</item>
+        <item>CC Barat</item>
+        <item>CC Timur</item>
+        <item>DPR</item>
+        <item>Sunken</item>
+        <item>Perpustakaan</item>
+        <item>PAU</item>
+        <item>Kubus</item>
     </string-array>
 </resources>

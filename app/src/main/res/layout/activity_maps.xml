@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:src="@android:drawable/ic_menu_mylocation"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="13dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
@@ -33,13 +33,25 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:src="@android:drawable/ic_menu_camera"
+        app:backgroundTint="@color/white"
+        android:tint="@color/black"
         android:layout_alignTop="@+id/buttonCenterMap"
         android:layout_toLeftOf="@+id/buttonCenterMap"
         android:layout_toStartOf="@+id/buttonCenterMap"
         android:layout_marginRight="5dp"
-        android:layout_marginEnd="5dp"
-        app:backgroundTint="@color/white"
-        android:tint="@color/black" />
+        android:onClick="startPictureIntent" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/buttonSubmitAnswerActivity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_alignTop="@+id/buttonTakePicture"
+        android:layout_toLeftOf="@+id/buttonTakePicture"
+        android:layout_toStartOf="@+id/buttonTakePicture"
+        android:src="@drawable/abc_ic_commit_search_api_mtrl_alpha"
+        android:layout_marginRight="5dp"
+        android:onClick="startSubmitAnswerActivity" />
 
     <ImageView
         android:layout_width="wrap_content"

@@ -1,10 +1,12 @@
 package com.ahmadnaufalfarhan.guestguessitb;
 
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.Image;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -38,6 +40,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     private LatLng itb;
+
+    static final int REQUEST_IMAGE_CAPTURE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,5 +129,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 currentDegree = -azimuth;
             }
         }
+    }
+
+    /* Get the camera intent */
+    public void startPictureIntent(View view) {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
+    /* Start the Submit Answer Activity */
+    public void startSubmitAnswerActivity(View view) {
+        Intent submitAnswerActivity = new Intent(this, SubmitAnswerActivity.class);
+        startActivity(submitAnswerActivity);
     }
 }

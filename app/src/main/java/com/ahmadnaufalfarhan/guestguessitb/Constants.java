@@ -5,6 +5,9 @@ package com.ahmadnaufalfarhan.guestguessitb;
  */
 public class Constants {
 
+    public static final String URL_PRODUCTION = "http://localhost/testserver";
+    public static final String URL_RELEASE = "";
+
     public static final String PRM_COMMUNICATION = "com";
     public static final String PRM_NIM = "nim";
     public static final String PRM_STATUS = "status";

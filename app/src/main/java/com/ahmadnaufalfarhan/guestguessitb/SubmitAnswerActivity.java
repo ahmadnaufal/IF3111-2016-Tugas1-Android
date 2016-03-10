@@ -29,4 +29,10 @@ public class SubmitAnswerActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+    public void submitAnswer(View view) {
+        // get the selected answer string
+        String answer = spinnerAnswers.getSelectedItem().toString();
+
+        /* Establish a connection to the server and prepare the JSON */
+    }
 }
