@@ -60,12 +60,14 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /* Start the Google Maps Activity by getting the intent */
+    /**
+     * Start the Google Maps Activity by getting the intent
+     * */
     public void requestChallengeHandler(View view) {
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo mNetworkInfo = connMgr.getActiveNetworkInfo();
         if (mNetworkInfo != null && mNetworkInfo.isConnected())
-            new RequestChallengeTask().execute(Constants.URL_PRODUCTION);
+            new RequestChallengeTask().execute();
         else
             Toast.makeText(MainActivity.this, "Not connected to internet", Toast.LENGTH_SHORT).show();
     }
@@ -74,14 +76,15 @@ public class MainActivity extends AppCompatActivity {
      *   This is the main class for our request forwarding method.
      *   We will be using AsyncTask to run our request on the background
      */
-    private class RequestChallengeTask extends AsyncTask<String, Void, String> {
+    private class RequestChallengeTask extends AsyncTask<Void, Void, JSONObject> {
         @Override
-        protected String doInBackground(String... urls) {
+        protected JSONObject doInBackground(Void... params) {
             StringBuilder sb = new StringBuilder();
+            JSONObject result = new JSONObject();
 
             HttpURLConnection conn = null;
             try {
-                URL url = new URL(urls[0]);
+                URL url = new URL(Constants.URL_PRODUCTION);
                 conn = (HttpURLConnection) url.openConnection();
 
                 /* connection properties */
@@ -113,32 +116,59 @@ public class MainActivity extends AppCompatActivity {
 
                     br.close();
 
-                    return sb.toString();
-                } else {
-                    return conn.getResponseMessage();
+                    // return the json string as the result
+                    result = new JSONObject(sb.toString());
                 }
 
             } catch (MalformedURLException e) {
                 e.printStackTrace();
-                return "Error with the URL. Check all spellings!";
+                Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
             } catch (IOException e) {
                 e.printStackTrace();
-                Log.d("Kucing", e.getMessage());
-                return "Error with the IO.";
+                Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
             } catch (JSONException e) {
                 e.printStackTrace();
-                return "Error with the JSON. Check all spellings!";
+                Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
             } finally {
                 if (conn != null)
                     conn.disconnect();
             }
+
+            return result;
         }
 
         @Override
-        protected void onPostExecute(String result) {
-            Toast.makeText(MainActivity.this, result, Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(MainActivity.this, MapsActivity.class);
-            startActivity(intent);
+        protected void onPostExecute(JSONObject result) {
+            if (result.length() > 0) {
+                try {
+                    // check if the answer request is a right answer
+                    String status = result.getString(Constants.PRM_STATUS);
+                    if (status.equalsIgnoreCase(Constants.STATUS_OK)) {
+                        // if the answer is right, autoload the map
+                        // and set the marker to point to the new coordinate
+                        double latitude = result.getDouble("latitude");
+                        double longitude = result.getDouble("longitude");
+                        String token = result.getString("token");    // TODO: set the new token
+
+                        // resume maps activity intent
+                        Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+                        intent.putExtra(Constants.PRM_LATITUDE, latitude);
+                        intent.putExtra(Constants.PRM_LONGITUDE, longitude);
+                        startActivity(intent);
+
+                    } else if (status.equalsIgnoreCase(Constants.STATUS_WRONGANSWER)) {
+                        Toast.makeText(MainActivity.this, "Oops! Wrong answer! Please try another answer.", Toast.LENGTH_LONG).show();
+                    } else if (status.equalsIgnoreCase(Constants.STATUS_FINISH)) {
+                        // TODO: Start finished activity or go back to splash screen
+                    }
+                } catch(JSONException e) {
+                    e.printStackTrace();
+                    Log.d("Guest Guess ITB Debug", e.toString());
+                }
+
+            } else {
+                Toast.makeText(MainActivity.this, "Connection error! Please retry after a while.", Toast.LENGTH_LONG).show();
+            }
         }
     }
 
