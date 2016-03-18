@@ -6,8 +6,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -70,7 +68,7 @@ public class SubmitAnswerActivity extends AppCompatActivity {
 
             HttpURLConnection conn = null;
             try {
-                URL url = new URL(Constants.URL_PRODUCTION);
+                URL url = new URL(Identification.URL_PRODUCTION);
                 conn = (HttpURLConnection) url.openConnection();
 
                 /* connection properties */
@@ -84,12 +82,12 @@ public class SubmitAnswerActivity extends AppCompatActivity {
 
                 /* create the request JSON object */
                 JSONObject requestJson = new JSONObject();
-                requestJson.put(Constants.PRM_COMMUNICATION, Constants.COM_ANSWER);
-                requestJson.put(Constants.PRM_NIM, Constants.NIM_VALUE);
-                requestJson.put(Constants.PRM_ANSWER, answer);
-                requestJson.put(Constants.PRM_LONGITUDE, null);   // TODO: set current longitude question
-                requestJson.put(Constants.PRM_LATITUDE, null);    // TODO: set current latitude question
-                requestJson.put(Constants.PRM_TOKEN, null);    // TODO: set current question token
+                requestJson.put(Identification.PRM_COMMUNICATION, Identification.COM_ANSWER);
+                requestJson.put(Identification.PRM_NIM, Identification.NIM_VALUE);
+                requestJson.put(Identification.PRM_ANSWER, answer);
+                requestJson.put(Identification.PRM_LONGITUDE, null);   // TODO: set current longitude question
+                requestJson.put(Identification.PRM_LATITUDE, null);    // TODO: set current latitude question
+                requestJson.put(Identification.PRM_TOKEN, null);    // TODO: set current question token
 
                 conn.connect();     // connect to the url
                 OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
@@ -132,8 +130,8 @@ public class SubmitAnswerActivity extends AppCompatActivity {
             if (result.length() > 0) {
                 try {
                     // check if the answer request is a right answer
-                    String status = result.getString(Constants.PRM_STATUS);
-                    if (status.equalsIgnoreCase(Constants.STATUS_OK)) {
+                    String status = result.getString(Identification.PRM_STATUS);
+                    if (status.equalsIgnoreCase(Identification.STATUS_OK)) {
                         // if the answer is right, autoload the map
                         // and set the marker to point to the new coordinate
                         double newLatitude = result.getDouble("latitude");
@@ -143,14 +141,15 @@ public class SubmitAnswerActivity extends AppCompatActivity {
                         // resume maps activity intent
                         Intent intent = new Intent(SubmitAnswerActivity.this, MapsActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        intent.putExtra(Constants.PRM_LATITUDE, newLatitude);
-                        intent.putExtra(Constants.PRM_LONGITUDE, newLongitude);
+                        intent.putExtra(Identification.PRM_LATITUDE, newLatitude);
+                        intent.putExtra(Identification.PRM_LONGITUDE, newLongitude);
                         startActivity(intent);
 
-                    } else if (status.equalsIgnoreCase(Constants.STATUS_WRONGANSWER)) {
+                    } else if (status.equalsIgnoreCase(Identification.STATUS_WRONGANSWER)) {
                         Toast.makeText(SubmitAnswerActivity.this, "Oops! Wrong answer! Please try another answer.", Toast.LENGTH_LONG).show();
-                    } else if (status.equalsIgnoreCase(Constants.STATUS_FINISH)) {
+                    } else if (status.equalsIgnoreCase(Identification.STATUS_FINISH)) {
                         // TODO: Start finished activity or go back to splash screen
+
                     }
                 } catch(JSONException e) {
                     e.printStackTrace();

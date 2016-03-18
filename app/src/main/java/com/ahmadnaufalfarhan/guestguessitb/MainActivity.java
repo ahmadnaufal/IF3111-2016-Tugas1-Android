@@ -6,15 +6,13 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -30,12 +28,23 @@ import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
 
+    public String token;
+    public String nimId;
+
+    private EditText nimEditText = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        nimEditText = (EditText) findViewById(R.id.nimEditText);
+
+        // initiate the token and identification NIM
+        token = "";
+        nimId = "";
     }
 
     @Override
@@ -64,12 +73,18 @@ public class MainActivity extends AppCompatActivity {
      * Start the Google Maps Activity by getting the intent
      * */
     public void requestChallengeHandler(View view) {
-        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo mNetworkInfo = connMgr.getActiveNetworkInfo();
-        if (mNetworkInfo != null && mNetworkInfo.isConnected())
-            new RequestChallengeTask().execute();
-        else
-            Toast.makeText(MainActivity.this, "Not connected to internet", Toast.LENGTH_SHORT).show();
+        String nimCurrent = nimEditText.getText().toString();
+        if (nimCurrent.equalsIgnoreCase(""))
+            Toast.makeText(MainActivity.this, "You have to enter your Student ID to play!", Toast.LENGTH_SHORT).show();
+        else {
+            ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo mNetworkInfo = connMgr.getActiveNetworkInfo();
+            if (mNetworkInfo != null && mNetworkInfo.isConnected())
+                //new RequestChallengeTask().execute();
+                startMapsActivity(104, 99);
+            else
+                Toast.makeText(MainActivity.this, "Not connected to internet", Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
@@ -84,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
 
             HttpURLConnection conn = null;
             try {
-                URL url = new URL(Constants.URL_PRODUCTION);
+                URL url = new URL(Identification.URL_PRODUCTION);
                 conn = (HttpURLConnection) url.openConnection();
 
                 /* connection properties */
@@ -98,8 +113,8 @@ public class MainActivity extends AppCompatActivity {
 
                 /* create the request JSON object */
                 JSONObject requestJson = new JSONObject();
-                requestJson.put(Constants.PRM_COMMUNICATION, Constants.COM_REQLOCATION);
-                requestJson.put(Constants.PRM_NIM, Constants.NIM_VALUE);
+                requestJson.put(Identification.PRM_COMMUNICATION, Identification.COM_REQLOCATION);
+                requestJson.put(Identification.PRM_NIM, Identification.NIM_VALUE);
 
                 conn.connect();     // connect to the url
                 OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
@@ -142,23 +157,20 @@ public class MainActivity extends AppCompatActivity {
             if (result.length() > 0) {
                 try {
                     // check if the answer request is a right answer
-                    String status = result.getString(Constants.PRM_STATUS);
-                    if (status.equalsIgnoreCase(Constants.STATUS_OK)) {
+                    String status = result.getString(Identification.PRM_STATUS);
+                    if (status.equalsIgnoreCase(Identification.STATUS_OK)) {
                         // if the answer is right, autoload the map
                         // and set the marker to point to the new coordinate
                         double latitude = result.getDouble("latitude");
                         double longitude = result.getDouble("longitude");
                         String token = result.getString("token");    // TODO: set the new token
 
-                        // resume maps activity intent
-                        Intent intent = new Intent(MainActivity.this, MapsActivity.class);
-                        intent.putExtra(Constants.PRM_LATITUDE, latitude);
-                        intent.putExtra(Constants.PRM_LONGITUDE, longitude);
-                        startActivity(intent);
+                        // start the maps activity
+                        startMapsActivity(latitude, longitude);
 
-                    } else if (status.equalsIgnoreCase(Constants.STATUS_WRONGANSWER)) {
+                    } else if (status.equalsIgnoreCase(Identification.STATUS_WRONGANSWER)) {
                         Toast.makeText(MainActivity.this, "Oops! Wrong answer! Please try another answer.", Toast.LENGTH_LONG).show();
-                    } else if (status.equalsIgnoreCase(Constants.STATUS_FINISH)) {
+                    } else if (status.equalsIgnoreCase(Identification.STATUS_FINISH)) {
                         // TODO: Start finished activity or go back to splash screen
                     }
                 } catch(JSONException e) {
@@ -170,6 +182,18 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Connection error! Please retry after a while.", Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    /**
+     * Method to send intent to Maps Activity
+     * Therefore, starting the game
+     */
+    public void startMapsActivity(double latitude, double longitude) {
+        // resume maps activity intent
+        Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+        intent.putExtra(Identification.PRM_LATITUDE, latitude);
+        intent.putExtra(Identification.PRM_LONGITUDE, longitude);
+        startActivity(intent);
     }
 
 

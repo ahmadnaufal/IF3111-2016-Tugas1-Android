@@ -3,7 +3,7 @@ package com.ahmadnaufalfarhan.guestguessitb;
 /**
  * Created by Ahmad Naufal Farhan on 3/9/2016.
  */
-public class Constants {
+public class Identification {
 
     public static final String URL_PRODUCTION = "http://localhost/testserver";
     public static final String URL_RELEASE = "";

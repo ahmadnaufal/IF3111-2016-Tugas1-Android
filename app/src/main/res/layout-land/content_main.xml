@@ -19,8 +19,8 @@
         android:text="@string/app_name"
         android:id="@+id/titleTextView"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="56dp"
-        android:layout_marginTop="56dp" />
+        android:layout_marginBottom="24dp"
+        android:layout_marginTop="40dp" />
 
     <EditText
         android:id="@+id/nimEditText"
@@ -28,8 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/titleTextView"
         android:layout_centerHorizontal="true"
-        android:hint="@string/nim_hint"
-        android:maxLength="8" />
+        android:hint="@string/nim_hint" />
 
     <Button
         android:layout_width="wrap_content"
