@@ -5,8 +5,8 @@ package com.ahmadnaufalfarhan.guestguessitb;
  */
 public class Identification {
 
-    public static final String URL_PRODUCTION = "http://localhost/testserver";
-    public static final String URL_RELEASE = "";
+    public static final String SERVER_IP = "167.205.34.132";
+    public static final int SERVER_PORT = 3111;
 
     public static final String PRM_COMMUNICATION = "com";
     public static final String PRM_NIM = "nim";
@@ -25,6 +25,7 @@ public class Identification {
     public static final String STATUS_OK = "ok";
     public static final String STATUS_WRONGANSWER = "wrong_answer";
     public static final String STATUS_FINISH = "finish";
+    public static final String STATUS_ERROR = "err";
 
     public static final int CHECK_TRUE = 1;
 

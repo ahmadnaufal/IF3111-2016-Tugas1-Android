@@ -5,9 +5,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.media.Image;
 import android.provider.MediaStore;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -48,7 +46,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        FloatingActionButton buttonCenterMap = (FloatingActionButton) findViewById(R.id.buttonCenterMap);
+        Button buttonCenterMap = (Button) findViewById(R.id.buttonCenterMap);
         buttonCenterMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

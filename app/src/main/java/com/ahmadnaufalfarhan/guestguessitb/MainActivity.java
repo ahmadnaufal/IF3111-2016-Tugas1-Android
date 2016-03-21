@@ -23,7 +23,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.Socket;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
@@ -97,56 +99,44 @@ public class MainActivity extends AppCompatActivity {
             StringBuilder sb = new StringBuilder();
             JSONObject result = new JSONObject();
 
-            HttpURLConnection conn = null;
-            try {
-                URL url = new URL(Identification.URL_PRODUCTION);
-                conn = (HttpURLConnection) url.openConnection();
+            Socket socket = null;
 
-                /* connection properties */
-                conn.setDoOutput(true);
-                conn.setDoInput(true);
-                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-                conn.setRequestProperty("Accept", "application/json");
-                conn.setRequestMethod("POST");
-                conn.setConnectTimeout(10000);
-                conn.setReadTimeout(10000);
+            try {
+                InetAddress serverAddress = InetAddress.getByName(Identification.SERVER_IP);
+                socket = new Socket(serverAddress, Identification.SERVER_PORT);
 
                 /* create the request JSON object */
                 JSONObject requestJson = new JSONObject();
                 requestJson.put(Identification.PRM_COMMUNICATION, Identification.COM_REQLOCATION);
                 requestJson.put(Identification.PRM_NIM, Identification.NIM_VALUE);
 
-                conn.connect();     // connect to the url
-                OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
+                OutputStreamWriter out = new OutputStreamWriter(socket.getOutputStream());
                 out.write(requestJson.toString());      // write the request to outputstream, sending them to server
                 out.close();
 
-                if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                    // if the response is OK (200), get the response string
-                    // and parse them as JSON
-                    BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
-                    String line;
-                    while ((line = br.readLine()) != null)
-                        sb.append(line + "\n");
+                // if the response is OK (200), get the response string
+                // and parse them as JSON
+                BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(), "utf-8"));
+                String line;
+                while ((line = br.readLine()) != null)
+                    sb.append(line + "\n");
 
-                    br.close();
+                br.close();
 
-                    // return the json string as the result
-                    result = new JSONObject(sb.toString());
-                }
+                // return the json string as the result
+                result = new JSONObject(sb.toString());
 
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-                Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
-            } catch (IOException e) {
-                e.printStackTrace();
-                Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
-            } catch (JSONException e) {
+            } catch (IOException | JSONException e) {
                 e.printStackTrace();
                 Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
             } finally {
-                if (conn != null)
-                    conn.disconnect();
+                if (socket != null) {
+                    try {
+                        socket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
 
             return result;
@@ -172,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "Oops! Wrong answer! Please try another answer.", Toast.LENGTH_LONG).show();
                     } else if (status.equalsIgnoreCase(Identification.STATUS_FINISH)) {
                         // TODO: Start finished activity or go back to splash screen
+                        Toast.makeText(MainActivity.this, "You have completed the game.", Toast.LENGTH_LONG).show();
                     }
                 } catch(JSONException e) {
                     e.printStackTrace();
