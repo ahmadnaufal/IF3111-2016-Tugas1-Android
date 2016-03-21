@@ -1,13 +1,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="9"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="8"
         xmlns:app="http://schemas.android.com/apk/res-auto">
 
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
@@ -23,9 +23,9 @@
             android:layout_alignParentStart="true" />
 
         <ImageView
+            android:id="@+id/imageCompass"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/imageCompass"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
@@ -36,39 +36,39 @@
     </RelativeLayout>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
         android:layout_weight="1"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         style="?android:attr/buttonBarStyle"
         xmlns:app="http://schemas.android.com/apk/res-auto">
 
         <ImageButton
             android:id="@+id/buttonCenterMap"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
             android:src="@android:drawable/ic_menu_mylocation"
-            android:tint="@android:color/black"
+            android:tint="@color/black"
             style="?android:attr/buttonBarButtonStyle" />
 
         <ImageButton
             android:id="@+id/buttonTakePicture"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
             android:src="@android:drawable/ic_menu_camera"
-            android:tint="@android:color/black"
+            android:tint="@color/black"
             android:onClick="startPictureIntent"
             style="?android:attr/buttonBarButtonStyle" />
 
         <ImageButton
             android:id="@+id/buttonSubmitAnswerActivity"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
             android:src="@android:drawable/ic_menu_agenda"
-            android:tint="@android:color/black"
+            android:tint="@color/black"
             android:onClick="startSubmitAnswerActivity"
             style="?android:attr/buttonBarButtonStyle" />
 
