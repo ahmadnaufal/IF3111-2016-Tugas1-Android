@@ -21,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
@@ -61,11 +62,11 @@ public class SubmitAnswerActivity extends AppCompatActivity {
             Toast.makeText(SubmitAnswerActivity.this, "You are not connected to internet", Toast.LENGTH_SHORT).show();
     }
 
-    private class SubmitAnswerTask extends AsyncTask<String, Void, JSONObject> {
+    private class SubmitAnswerTask extends AsyncTask<String, Void, String> {
         @Override
-        protected JSONObject doInBackground(String... answers) {
+        protected String doInBackground(String... answers) {
             StringBuilder sb = new StringBuilder();
-            JSONObject result = new JSONObject();
+            String result = "";
             String answer = answers[0];
 
             Socket socket = null;
@@ -79,13 +80,13 @@ public class SubmitAnswerActivity extends AppCompatActivity {
                 requestJson.put(Identification.PRM_COMMUNICATION, Identification.COM_ANSWER);
                 requestJson.put(Identification.PRM_NIM, Identification.NIM_VALUE);
                 requestJson.put(Identification.PRM_ANSWER, answer);
-                requestJson.put(Identification.PRM_LONGITUDE, null);   // TODO: set current longitude question
-                requestJson.put(Identification.PRM_LATITUDE, null);    // TODO: set current latitude question
-                requestJson.put(Identification.PRM_TOKEN, null);    // TODO: set current question token
+                requestJson.put(Identification.PRM_LONGITUDE, MapsActivity.currentPosition.longitude);   // TODO: set current longitude question
+                requestJson.put(Identification.PRM_LATITUDE, MapsActivity.currentPosition.latitude);    // TODO: set current latitude question
+                requestJson.put(Identification.PRM_TOKEN, MainActivity.token);    // TODO: set current question token
 
-                OutputStreamWriter out = new OutputStreamWriter(socket.getOutputStream());
-                out.write(requestJson.toString());      // write the request to outputstream, sending them to server
-                out.close();
+                PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+                out.println(requestJson.toString());      // write the request to outputstream, sending them to server
+                out.flush();
 
                 // if the response is OK (200), get the response string
                 // and parse them as JSON
@@ -97,11 +98,10 @@ public class SubmitAnswerActivity extends AppCompatActivity {
                 br.close();
 
                 // return the json string as the result
-                result = new JSONObject(sb.toString());
+                result = sb.toString();
 
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
-                Toast.makeText(SubmitAnswerActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
             } finally {
                 if (socket != null) {
                     try {
@@ -116,30 +116,34 @@ public class SubmitAnswerActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(JSONObject result) {
-            if (result.length() > 0) {
+        protected void onPostExecute(String outputResult) {
+            if (outputResult.length() > 0) {
+                Toast.makeText(SubmitAnswerActivity.this, outputResult, Toast.LENGTH_SHORT).show();
                 try {
+                    JSONObject result = new JSONObject(outputResult);   // parse result to json
+
                     // check if the answer request is a right answer
                     String status = result.getString(Identification.PRM_STATUS);
                     if (status.equalsIgnoreCase(Identification.STATUS_OK)) {
                         // if the answer is right, autoload the map
                         // and set the marker to point to the new coordinate
-                        double newLatitude = result.getDouble("latitude");
-                        double newLongitude = result.getDouble("longitude");
-                        String newToken = result.getString("token");    // TODO: set the new token
+                        MapsActivity.longitude = result.getDouble("latitude");
+                        MapsActivity.latitude = result.getDouble("longitude");
+                        MainActivity.token = result.getString("token");    // TODO: set the new token
 
                         // resume maps activity intent
                         Intent intent = new Intent(SubmitAnswerActivity.this, MapsActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        intent.putExtra(Identification.PRM_LATITUDE, newLatitude);
-                        intent.putExtra(Identification.PRM_LONGITUDE, newLongitude);
                         startActivity(intent);
 
                     } else if (status.equalsIgnoreCase(Identification.STATUS_WRONGANSWER)) {
                         Toast.makeText(SubmitAnswerActivity.this, "Oops! Wrong answer! Please try another answer.", Toast.LENGTH_LONG).show();
                     } else if (status.equalsIgnoreCase(Identification.STATUS_FINISH)) {
                         // TODO: Start finished activity or go back to splash screen
-
+                        Toast.makeText(SubmitAnswerActivity.this, "You have completed the game.", Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(SubmitAnswerActivity.this, MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
                     }
                 } catch(JSONException e) {
                     e.printStackTrace();

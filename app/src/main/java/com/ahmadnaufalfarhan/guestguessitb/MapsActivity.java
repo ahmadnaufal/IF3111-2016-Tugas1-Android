@@ -33,20 +33,21 @@ import java.util.Date;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, SensorEventListener {
 
+    // compass attributes
     private ImageView imageCompass;
     private float currentDegree = 0f;
     float[] mAccelerometer;
     float[] mMagnetometer;
 
+    // sensor handler for compass
     private SensorManager sensorManager;
     Sensor accelerometerSensor;
     Sensor magnetometerSensor;
 
-    private static final double ITB_LATITUDE = -6.89284;
-    private static final double ITB_LONGITUDE = 107.61052;
-
     private GoogleMap mMap;
-    private LatLng itb;
+    public static LatLng currentPosition;
+    public static double latitude;
+    public static double longitude;
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
@@ -60,7 +61,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
                 // if clicked, reposition camera to original position (ITB)
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(itb, 17));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentPosition, 17));
             }
         });
 
@@ -68,6 +69,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         magnetometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+
+        Intent callingIntent = getIntent();
+        latitude = callingIntent.getDoubleExtra(Identification.PRM_LATITUDE, 0);
+        longitude = callingIntent.getDoubleExtra(Identification.PRM_LONGITUDE, 0);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -78,6 +83,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onResume() {
         super.onResume();
+
+        // get the extra intent
+        currentPosition = new LatLng(latitude, longitude);
 
         // register the listener
         boolean isAccel = sensorManager.registerListener(this, accelerometerSensor, SensorManager.SENSOR_DELAY_GAME);
@@ -107,9 +115,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-        itb = new LatLng(ITB_LATITUDE, ITB_LONGITUDE);
-        mMap.addMarker(new MarkerOptions().position(itb).title("Marker in ITB"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(itb, 17));
+        mMap.addMarker(new MarkerOptions().position(currentPosition).title("Marker in ITB"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentPosition, 17));
     }
 
     public void onAccuracyChanged(Sensor sensor, int accuracy) {}
@@ -178,12 +185,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String imageFileName = "GGITB_"+ timestamp;
         File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
 
-        File image = File.createTempFile(
+        // Save the image file with the properties
+        File imageFile = File.createTempFile(
                 imageFileName,
                 ".jpg",
                 storageDir
         );
 
-        return image;
+        return imageFile;
     }
 }

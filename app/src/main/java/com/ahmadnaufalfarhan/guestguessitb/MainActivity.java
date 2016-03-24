@@ -19,9 +19,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
@@ -30,8 +33,9 @@ import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
 
-    public String token;
-    public String nimId;
+    // this is the main attribute for identification
+    public static String token;
+    public static String nimId;
 
     private EditText nimEditText = null;
 
@@ -82,8 +86,7 @@ public class MainActivity extends AppCompatActivity {
             ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo mNetworkInfo = connMgr.getActiveNetworkInfo();
             if (mNetworkInfo != null && mNetworkInfo.isConnected())
-                //new RequestChallengeTask().execute();
-                startMapsActivity(104, 99);
+                new RequestChallengeTask().execute();
             else
                 Toast.makeText(MainActivity.this, "Not connected to internet", Toast.LENGTH_SHORT).show();
         }
@@ -93,11 +96,11 @@ public class MainActivity extends AppCompatActivity {
      *   This is the main class for our request forwarding method.
      *   We will be using AsyncTask to run our request on the background
      */
-    private class RequestChallengeTask extends AsyncTask<Void, Void, JSONObject> {
+    private class RequestChallengeTask extends AsyncTask<Void, Void, String> {
         @Override
-        protected JSONObject doInBackground(Void... params) {
+        protected String doInBackground(Void... params) {
             StringBuilder sb = new StringBuilder();
-            JSONObject result = new JSONObject();
+            String result = "";
 
             Socket socket = null;
 
@@ -107,16 +110,16 @@ public class MainActivity extends AppCompatActivity {
 
                 /* create the request JSON object */
                 JSONObject requestJson = new JSONObject();
-                requestJson.put(Identification.PRM_COMMUNICATION, Identification.COM_REQLOCATION);
                 requestJson.put(Identification.PRM_NIM, Identification.NIM_VALUE);
+                requestJson.put(Identification.PRM_COMMUNICATION, Identification.COM_REQLOCATION);
 
-                OutputStreamWriter out = new OutputStreamWriter(socket.getOutputStream());
-                out.write(requestJson.toString());      // write the request to outputstream, sending them to server
-                out.close();
+                PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+                out.println(requestJson.toString());      // write the request to outputstream, sending them to server
+                out.flush();
 
                 // if the response is OK (200), get the response string
                 // and parse them as JSON
-                BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(), "utf-8"));
+                BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 String line;
                 while ((line = br.readLine()) != null)
                     sb.append(line + "\n");
@@ -124,11 +127,11 @@ public class MainActivity extends AppCompatActivity {
                 br.close();
 
                 // return the json string as the result
-                result = new JSONObject(sb.toString());
+                result = sb.toString();
 
-            } catch (IOException | JSONException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
-                Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
             } finally {
                 if (socket != null) {
                     try {
@@ -143,17 +146,20 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(JSONObject result) {
-            if (result.length() > 0) {
+        protected void onPostExecute(String outputResult) {
+            if (outputResult.length() > 0) {
+                Toast.makeText(MainActivity.this, outputResult, Toast.LENGTH_SHORT).show();
                 try {
+                    JSONObject result = new JSONObject(outputResult);   // parse result to json
+
                     // check if the answer request is a right answer
                     String status = result.getString(Identification.PRM_STATUS);
                     if (status.equalsIgnoreCase(Identification.STATUS_OK)) {
                         // if the answer is right, autoload the map
                         // and set the marker to point to the new coordinate
-                        double latitude = result.getDouble("latitude");
-                        double longitude = result.getDouble("longitude");
-                        String token = result.getString("token");    // TODO: set the new token
+                        double longitude = result.getDouble("latitude");
+                        double latitude = result.getDouble("longitude");
+                        token = result.getString("token");    // TODO: set the new token
 
                         // start the maps activity
                         startMapsActivity(latitude, longitude);
