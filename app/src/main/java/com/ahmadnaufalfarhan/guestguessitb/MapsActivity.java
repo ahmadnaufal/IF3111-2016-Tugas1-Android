@@ -2,6 +2,7 @@ package com.ahmadnaufalfarhan.guestguessitb;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -41,6 +42,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     float[] mAccelerometer;
     float[] mMagnetometer;
 
+    static String CURRENT_LONGITUDE = "CURRENT_LONGITUDE";
+    static String CURRENT_LATITUDE = "CURRENT_LATITUDE";
+
     // sensor handler for compass
     private SensorManager sensorManager;
     Sensor accelerometerSensor;
@@ -72,16 +76,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         magnetometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
-        Intent callingIntent = getIntent();
-        if (latitude == 0f && longitude == 0f) {
-            latitude = callingIntent.getDoubleExtra(Identification.PRM_LATITUDE, 0);
-            longitude = callingIntent.getDoubleExtra(Identification.PRM_LONGITUDE, 0);
+        Intent intent = getIntent();
+        double t_latitude = intent.getDoubleExtra(Identification.PRM_LATITUDE, 0f);
+        double t_longitude = intent.getDoubleExtra(Identification.PRM_LONGITUDE, 0f);
+
+        if (t_latitude != 0f && t_longitude != 0f) {
+            latitude = t_latitude;
+            longitude = t_longitude;
+        } else if (savedInstanceState != null) {
+            latitude = savedInstanceState.getDouble(CURRENT_LATITUDE);
+            longitude = savedInstanceState.getDouble(CURRENT_LATITUDE);
         }
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save current longitude and latitude
+        savedInstanceState.putDouble(CURRENT_LATITUDE, latitude);
+        savedInstanceState.putDouble(CURRENT_LONGITUDE, longitude);
+
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
