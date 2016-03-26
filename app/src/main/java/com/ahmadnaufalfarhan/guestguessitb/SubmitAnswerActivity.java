@@ -6,13 +6,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Looper;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -23,7 +20,6 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
@@ -46,8 +42,6 @@ public class SubmitAnswerActivity extends AppCompatActivity
     private Location location;
 
     private Spinner spinnerAnswers;
-    private double currentLatitude = 0f;
-    private double currentLongitude = 0f;
 
     private GoogleApiClient mGoogleApiClient = null;
 
@@ -114,6 +108,9 @@ public class SubmitAnswerActivity extends AppCompatActivity
                 requestJson.put(Identification.PRM_LATITUDE, location.getLongitude());    // TODO: set current latitude question
                 requestJson.put(Identification.PRM_TOKEN, token);    // TODO: set current question token
 
+                Long timestamp = System.currentTimeMillis()/1000;
+                Log.d(getString(R.string.debug_log), timestamp.toString() + ": Sending JSON Object " + requestJson.toString());
+
                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
                 out.println(requestJson.toString());      // write the request to outputstream, sending them to server
                 out.flush();
@@ -124,6 +121,9 @@ public class SubmitAnswerActivity extends AppCompatActivity
                 String line;
                 while ((line = br.readLine()) != null)
                     sb.append(line + "\n");
+
+                timestamp = System.currentTimeMillis()/1000;
+                Log.d(getString(R.string.debug_log), timestamp.toString() + ": Receiving JSON Object " + sb.toString());
 
                 br.close();
 
@@ -234,14 +234,10 @@ public class SubmitAnswerActivity extends AppCompatActivity
     }
 
     @Override
-    public void onConnectionSuspended(int i) {
-
-    }
+    public void onConnectionSuspended(int i) { }
 
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-
-    }
+    public void onConnectionFailed(ConnectionResult connectionResult) { }
 
     @Override
     public void onLocationChanged(Location location) {

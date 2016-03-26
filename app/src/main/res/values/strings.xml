@@ -21,6 +21,7 @@
         <item>PAU</item>
         <item>Kubus</item>
     </string-array>
+    <string name="debug_log">GuestGuessITB Debug Log</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

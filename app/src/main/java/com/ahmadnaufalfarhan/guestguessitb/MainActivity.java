@@ -3,14 +3,10 @@ package com.ahmadnaufalfarhan.guestguessitb;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -18,26 +14,17 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.net.HttpURLConnection;
 import java.net.InetAddress;
-import java.net.MalformedURLException;
 import java.net.Socket;
-import java.net.URL;
-import java.security.Permission;
-import java.util.jar.Manifest;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -93,8 +80,7 @@ public class MainActivity extends AppCompatActivity {
             ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo mNetworkInfo = connMgr.getActiveNetworkInfo();
             if (mNetworkInfo != null && mNetworkInfo.isConnected())
-               //new RequestChallengeTask().execute();
-                startMapsActivity(35, 34);
+               new RequestChallengeTask().execute();
             else
                 Toast.makeText(MainActivity.this, "Not connected to internet", Toast.LENGTH_SHORT).show();
         }
@@ -125,6 +111,8 @@ public class MainActivity extends AppCompatActivity {
                 requestJson.put(Identification.PRM_NIM, nim);
                 requestJson.put(Identification.PRM_COMMUNICATION, Identification.COM_REQLOCATION);
 
+                Long timestamp = System.currentTimeMillis()/1000;
+                Log.d(getString(R.string.debug_log), timestamp.toString() + ": Sending JSON Object " + requestJson.toString());
                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
                 out.println(requestJson.toString());      // write the request to outputstream, sending them to server
                 out.flush();
@@ -136,14 +124,15 @@ public class MainActivity extends AppCompatActivity {
                 while ((line = br.readLine()) != null)
                     sb.append(line + "\n");
 
-                br.close();
+                timestamp = System.currentTimeMillis()/1000;
+                Log.d(getString(R.string.debug_log), timestamp.toString() + ": Receiving JSON Object " + sb.toString());
 
+                br.close();
                 // return the json string as the result
                 result = sb.toString();
 
             } catch (Exception e) {
                 e.printStackTrace();
-                //Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
             } finally {
                 if (socket != null) {
                     try {
@@ -190,7 +179,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 } catch(JSONException e) {
                     e.printStackTrace();
-                    Log.d("Guest Guess ITB Debug", e.toString());
                 }
 
             } else {

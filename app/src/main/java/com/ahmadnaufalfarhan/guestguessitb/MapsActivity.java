@@ -11,14 +11,12 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -94,9 +92,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         currentPosition = new LatLng(latitude, longitude);
 
         // register the listener
-        boolean isAccel = sensorManager.registerListener(this, accelerometerSensor, SensorManager.SENSOR_DELAY_GAME);
-        boolean isMagnet = sensorManager.registerListener(this, magnetometerSensor, SensorManager.SENSOR_DELAY_GAME);
-        Log.i("Kucing", String.valueOf(isAccel) + " " + String.valueOf(isMagnet));
+        sensorManager.registerListener(this, accelerometerSensor, SensorManager.SENSOR_DELAY_GAME);
+        sensorManager.registerListener(this, magnetometerSensor, SensorManager.SENSOR_DELAY_GAME);
     }
 
     @Override
