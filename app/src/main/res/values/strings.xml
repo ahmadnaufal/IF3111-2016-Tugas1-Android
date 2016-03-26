@@ -8,6 +8,7 @@
     <string name="title_activity_submit_answer">Submit Answer</string>
     <string name="label_submit">Your Answer</string>
     <string name="nim_hint">Enter Your Student ID here...</string>
+    <string name="app_shared_preferences">GuestGuessITB.SHARED_PREFERENCES</string>
     <string-array name="location_array">
         <item>GKU Barat</item>
         <item>GKU Timur</item>

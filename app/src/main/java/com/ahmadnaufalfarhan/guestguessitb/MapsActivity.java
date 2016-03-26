@@ -1,5 +1,6 @@
 package com.ahmadnaufalfarhan.guestguessitb;
 
+import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -11,7 +12,10 @@ import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
+import android.view.Surface;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.Button;
@@ -71,8 +75,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         magnetometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
         Intent callingIntent = getIntent();
-        latitude = callingIntent.getDoubleExtra(Identification.PRM_LATITUDE, 0);
-        longitude = callingIntent.getDoubleExtra(Identification.PRM_LONGITUDE, 0);
+        if (latitude == 0f && longitude == 0f) {
+            latitude = callingIntent.getDoubleExtra(Identification.PRM_LATITUDE, 0);
+            longitude = callingIntent.getDoubleExtra(Identification.PRM_LONGITUDE, 0);
+        }
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -133,6 +139,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (SensorManager.getRotationMatrix(R, I, mAccelerometer, mMagnetometer)) {
                 float orientation[] = new float[3];
                 float azimuth = (float) (Math.toDegrees( SensorManager.getOrientation(R, orientation)[0]) + 360) % 360;
+                Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+                switch (display.getRotation()) {
+                    case Surface.ROTATION_90:
+                        azimuth += 90; break;
+                    case Surface.ROTATION_180:
+                        azimuth += 180; break;
+                    case Surface.ROTATION_270:
+                        azimuth -= 90; break;
+                    default:
+                        break;
+                }
 
                 RotateAnimation ra = new RotateAnimation(currentDegree, -azimuth, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
                 ra.setDuration(210);

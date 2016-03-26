@@ -2,10 +2,15 @@ package com.ahmadnaufalfarhan.guestguessitb;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -13,6 +18,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -30,12 +36,10 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URL;
+import java.security.Permission;
+import java.util.jar.Manifest;
 
 public class MainActivity extends AppCompatActivity {
-
-    // this is the main attribute for identification
-    public static String token;
-    public static String nimId;
 
     private EditText nimEditText = null;
 
@@ -47,10 +51,6 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         nimEditText = (EditText) findViewById(R.id.nimEditText);
-
-        // initiate the token and identification NIM
-        token = "";
-        nimId = "";
     }
 
     @Override
@@ -83,10 +83,18 @@ public class MainActivity extends AppCompatActivity {
         if (nimCurrent.equalsIgnoreCase(""))
             Toast.makeText(MainActivity.this, "You have to enter your Student ID to play!", Toast.LENGTH_SHORT).show();
         else {
+            // Save NIM value to Shared Preferences for this activity
+            SharedPreferences sharedPref = this.getSharedPreferences(getString(R.string.app_shared_preferences), Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString(Identification.PRM_NIM, nimCurrent);
+            editor.apply();
+
+            // get the connection manager
             ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo mNetworkInfo = connMgr.getActiveNetworkInfo();
             if (mNetworkInfo != null && mNetworkInfo.isConnected())
-                new RequestChallengeTask().execute();
+               //new RequestChallengeTask().execute();
+                startMapsActivity(35, 34);
             else
                 Toast.makeText(MainActivity.this, "Not connected to internet", Toast.LENGTH_SHORT).show();
         }
@@ -108,9 +116,13 @@ public class MainActivity extends AppCompatActivity {
                 InetAddress serverAddress = InetAddress.getByName(Identification.SERVER_IP);
                 socket = new Socket(serverAddress, Identification.SERVER_PORT);
 
+                // get shared preferences to put NIM entered by user
+                SharedPreferences sharedPref = MainActivity.this.getSharedPreferences(getString(R.string.app_shared_preferences), Context.MODE_PRIVATE);
+                String nim = sharedPref.getString(Identification.PRM_NIM, Identification.NIM_DEFAULT_VALUE);
+
                 /* create the request JSON object */
                 JSONObject requestJson = new JSONObject();
-                requestJson.put(Identification.PRM_NIM, Identification.NIM_VALUE);
+                requestJson.put(Identification.PRM_NIM, nim);
                 requestJson.put(Identification.PRM_COMMUNICATION, Identification.COM_REQLOCATION);
 
                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
@@ -157,9 +169,15 @@ public class MainActivity extends AppCompatActivity {
                     if (status.equalsIgnoreCase(Identification.STATUS_OK)) {
                         // if the answer is right, autoload the map
                         // and set the marker to point to the new coordinate
-                        double longitude = result.getDouble("latitude");
-                        double latitude = result.getDouble("longitude");
-                        token = result.getString("token");    // TODO: set the new token
+                        double longitude = result.getDouble(Identification.PRM_LATITUDE);
+                        double latitude = result.getDouble(Identification.PRM_LONGITUDE);
+                        String token = result.getString(Identification.PRM_TOKEN);
+
+                        // get shared preferences to put our token
+                        SharedPreferences sharedPref = MainActivity.this.getSharedPreferences(getString(R.string.app_shared_preferences), Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.putString(Identification.PRM_TOKEN, token);
+                        editor.apply();
 
                         // start the maps activity
                         startMapsActivity(latitude, longitude);
