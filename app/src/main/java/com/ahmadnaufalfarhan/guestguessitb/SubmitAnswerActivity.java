@@ -157,8 +157,8 @@ public class SubmitAnswerActivity extends AppCompatActivity
                     if (status.equalsIgnoreCase(Identification.STATUS_OK)) {
                         // if the answer is right, autoload the map
                         // and set the marker to point to the new coordinate
-                        MapsActivity.longitude = result.getDouble(Identification.PRM_LATITUDE);
-                        MapsActivity.latitude = result.getDouble(Identification.PRM_LONGITUDE);
+                        double longitude = result.getDouble(Identification.PRM_LATITUDE);
+                        double latitude = result.getDouble(Identification.PRM_LONGITUDE);
                         String token = result.getString("token");    // TODO: set the new token
 
                         // get shared preferences to put our mew token
@@ -170,6 +170,8 @@ public class SubmitAnswerActivity extends AppCompatActivity
                         // resume maps activity intent
                         Intent intent = new Intent(SubmitAnswerActivity.this, MapsActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.putExtra(Identification.PRM_LATITUDE, longitude);
+                        intent.putExtra(Identification.PRM_LONGITUDE, latitude);
                         startActivity(intent);
 
                     } else if (status.equalsIgnoreCase(Identification.STATUS_WRONGANSWER)) {
