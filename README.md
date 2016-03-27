@@ -17,28 +17,23 @@ Jika anda adalah mahasiswa **Institut Teknologi Bandung** alias **ITB** kemudian
 ### Bagaimana Cara Menggunakan Aplikasi Ini?
 
 1. Buka aplikasi dan masukkan NIM anda di *field* yang tersedia. Kemudian, klik tombol *REQUEST CHALLENGE!* Pada saat itu, aplikasi akan mengirimkan *request* ke *server* untuk lokasi baru.
+2. Tunggu sesaat hingga *server* membalas *request* anda, yang berisi koordinat untuk lokasi baru tersebut. Koordinat akan ditampilkan dalam bentuk *Marker* pada *Google Maps* yang muncul.
+3. Silahkan pergi ke tempat tersebut!
+4. Jika sudah sampai di tempat, Buka kamera melalui aplikasi, kemudian foto lokasi tersebut.
+5. Jawab nama tempat tersebut melalui tombol Submit Answer yang ada di pojok kanan bawah layar, dengan memilih nama tempat yang tersedia di *dropdown*.
+6. Jika anda yakin, tekan tombol *Submit Answer*. Jawaban akan dikirimkan ke *server*, beserta dengan koordinat lokasi anda sekarang.
+7. Jika anda mendapatkan pesan berhasil, maka anda akan diberikan koordinat untuk tempat selanjutnya!
+8. Ulangi hingga 3 kali, dan anda telah selesai menggunakan aplikasi.
+
+### Screenshot Layar
 
 ![Panduan 1](http://i.imgur.com/SkA4587.png)
 
-2. Tunggu sesaat hingga *server* membalas *request* anda, yang berisi koordinat untuk lokasi baru tersebut. Koordinat akan ditampilkan dalam bentuk *Marker* pada *Google Maps* yang muncul.
-
 ![Panduan 2](http://i.imgur.com/9hv5R43.png)
-
-3. Silahkan pergi ke tempat tersebut!
-
-4. Jika sudah sampai di tempat, Buka kamera melalui aplikasi, kemudian foto lokasi tersebut.
 
 ![Panduan 3](http://i.imgur.com/i15K1yU.png)
 
-5. Jawab nama tempat tersebut melalui tombol Submit Answer yang ada di pojok kanan bawah layar, dengan memilih nama tempat yang tersedia di *dropdown*.
-
 ![Panduan 4](http://i.imgur.com/EcW1Zf4.png)
-
-6. Jika anda yakin, tekan tombol *Submit Answer*. Jawaban akan dikirimkan ke *server*, beserta dengan koordinat lokasi anda sekarang.
-
-7. Jika anda mendapatkan pesan berhasil, maka anda akan diberikan koordinat untuk tempat selanjutnya!
-
-8. Ulangi hingga 3 kali, dan anda telah selesai menggunakan aplikasi.
 
 ![Panduan 5](http://i.imgur.com/UyVjZ3Y.png)
 
