@@ -176,6 +176,8 @@ public class MainActivity extends AppCompatActivity {
                     } else if (status.equalsIgnoreCase(Identification.STATUS_FINISH)) {
                         // TODO: Start finished activity or go back to splash screen
                         Toast.makeText(MainActivity.this, "You have completed the game.", Toast.LENGTH_LONG).show();
+                    } else if (status.equalsIgnoreCase(Identification.STATUS_ERROR)) {
+                        Toast.makeText(MainActivity.this, "Oops! Something is wrong... Error occurred :(", Toast.LENGTH_SHORT).show();
                     }
                 } catch(JSONException e) {
                     e.printStackTrace();

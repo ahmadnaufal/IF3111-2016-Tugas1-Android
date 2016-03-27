@@ -182,10 +182,11 @@ public class SubmitAnswerActivity extends AppCompatActivity
                         Intent intent = new Intent(SubmitAnswerActivity.this, MainActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
+                    } else if (status.equalsIgnoreCase(Identification.STATUS_ERROR)) {
+                        Toast.makeText(SubmitAnswerActivity.this, "Oops! Something is wrong... Error occurred :(", Toast.LENGTH_SHORT).show();
                     }
                 } catch(JSONException e) {
                     e.printStackTrace();
-                    Log.d("Guest Guess ITB Debug", e.toString());
                 }
 
             } else {
