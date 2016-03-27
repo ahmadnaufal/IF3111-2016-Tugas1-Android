@@ -13,6 +13,7 @@ Jika anda adalah mahasiswa **Institut Teknologi Bandung** alias **ITB** kemudian
 * Tersedia gambar panah yang akan menunjukkan arah Utara
 * Anda dapat mengambil foto lokasi yang telah dikunjungi
 * Anda dapat meminta lokasi baru dengan menebak nama tempat yang baru saja anda kunjungi
+* Koordinat lokasi yang akan dikirimkan dari tempat anda pada saat itu
 
 ### Bagaimana Cara Menggunakan Aplikasi Ini?
 
